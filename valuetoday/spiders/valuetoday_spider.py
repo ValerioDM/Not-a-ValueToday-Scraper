@@ -41,22 +41,21 @@ class ValueTodaySpider(scrapy.Spider):
         options = webdriver.ChromeOptions()
         options.add_argument("--headless")
         options.add_argument("--disable-gpu")
-        desired_capabilities = options.to_capabilities()
-        driver = webdriver.Chrome(executable_path=path, desired_capabilities=desired_capabilities)
+        driver = webdriver.Chrome(executable_path=path, options=options)
 
         driver.get(response.request.url)
 
         # Implicit wait
-        driver.implicitly_wait(10)
+        driver.implicitly_wait(1)
         # Explicit wait
-        wait = WebDriverWait(driver, 10)
+        wait = WebDriverWait(driver, 1)
 
 
         
         try:
             wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.field.field--name-node-title.field--type-ds.field--label-hidden.field--item > h1 > a")))
             companyName = driver.find_elements_by_css_selector("div.field.field--name-node-title.field--type-ds.field--label-hidden.field--item > h1 > a")
-            companyName = CompanyName[0].get_attribute('outerText')
+            companyName = companyName[0].get_attribute('outerText')
         except:
             companyName = ''
 
@@ -96,9 +95,9 @@ class ValueTodaySpider(scrapy.Spider):
         try:
             wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.clearfix.col-sm-12.field.field--name-field-company-category-primary.field--type-entity-reference.field--label-inline > div.field--items > div")))
             company_Business = driver.find_elements_by_css_selector("div.clearfix.col-sm-12.field.field--name-field-company-category-primary.field--type-entity-reference.field--label-inline > div.field--items > div")
-            companBusiness = ""
+            companyBusiness = ""
             for c in company_Business:
-                companBusiness = companBusiness + s.get_attribute('outerText') + ', '
+                companBusiness = companBusiness + c.get_attribute('outerText') + ', '
         except:
             companyBusiness = ''
 
